@@ -5,8 +5,6 @@ on:
     workflows: [Close issue/PR on adding invalid label]
     types: [completed]
   # pull_request does not run for conflicted PRs, so reconcile from the trusted default branch.
-  schedule:
-    - cron: '*/5 * * * *'
   workflow_dispatch:
 
 permissions: {}

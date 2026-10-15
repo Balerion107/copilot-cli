@@ -2,9 +2,7 @@ name: No Response
 
 # Automatically close issues labeled 'more-info-needed' after 7 days of inactivity
 on:
-  schedule:
-    # Schedule for five minutes after the hour, every hour
-    - cron: '5 * * * *'
+  workflow_dispatch:
 
 permissions:
   issues: write
