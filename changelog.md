@@ -1,3 +1,197 @@
+## 1.0.98 - 2026-10-14
+
+- Add support for Gemini 4 Argon
+- Command hooks complete reliably even when child-exit signals are lost under Node
+- MCP status and /mcp commands stay synced to the active session after split-view session switches
+- Resuming a session now respects abandoned pending-permission work and continues only active permission requests.
+- Keep ordinary characters typed while the input box is still coming up at startup, instead of dropping them
+- Expand /ask answers with Ctrl+E, copy the entire answer with Ctrl+Y, and reopen the last usable completed answer in the session with /ask or /btw.
+
+## 1.0.97 - 2026-10-13
+
+- Add agent-scoped declarative hooks for custom agents
+- Remote plugin marketplace and plugin fetches retry once with your signed-in GitHub token after HTTPS auth fails.
+- Streamed responses behind TLS-intercepting proxies complete when close_notify is omitted
+- Fix parsing of GitHub SCP remotes with absolute paths so repository owner and name resolve correctly
+- Discover all custom agents even when repositories define more than 100 or nest agent files deeply.
+- Autopilot denies a preToolUse hook's "ask" decision instead of stopping on a permission dialog nobody is watching
+- Keep Windows taskbar agent icons grouped across CLI updates by using a stable icon path
+- Keep saved settings such as dismissed prompts, trusted folders and sign-ins when one entry in config.json is invalid, instead of resetting them on every launch
+- In /config, managed permission rules are read-only and hidden unless set by your organization.
+- Show billed AI Credits in /usage for token-billed sessions, including after resume
+- File reads using a view_range that is not exactly two elements, such as a lone start line, now show their line range and line count in the timeline, and session exports no longer contain the literal text undefined
+- Dragging to select text in the transcript no longer occasionally highlights and copies the row below the pointer.
+- Power BI and Bluebird MCP servers accept their published resource scopes during sign-in
+- Redact secrets safely in --output-format json output while preserving valid variable references
+- Resuming suspended sessions now reports interrupted tool calls and avoids replaying canceled writes.
+- Synchronous /task JSON output now includes failed child error and lifecycle events before completion.
+- Explicit GitHub MCP tool and toolset selections use the correct endpoint, so requested write tools stay available.
+- Cached MCP tool calls recheck their definition when a concurrent tool-list refresh changes the catalog.
+- Skills and custom agents from --plugin-dir plugins now reach autocomplete and invocation instead of going missing.
+- Fixed resumed sessions rebuilding plugin hooks from the wrong plugin list, so hooks from repository-local marketplace plugins now keep running after `--resume`, and hooks from plugins your configuration disabled no longer come back
+- Keep /user switch new-session choices visible after account checks in short terminals
+- Unavailable permission recovery attempts are now tracked per request, so unrelated calls no longer consume each other's retry budget.
+- Background-shell wait status no longer animates when no foreground work is running
+- Emergency memory relief in long sessions can now bypass its cooldown before V8 aborts, so a session that would have been killed by a JavaScript heap out of memory crash may survive with compacted history instead
+- Inline images render by default on supported terminals without enabling experimental mode. Use `/settings inlineImages false` to turn them off
+
+## 1.0.96 - 2026-10-12
+
+- Interactive sandbox settings suggest possible environment secrets and let you add masking hosts before saving.
+- Make model IDs in /model and /config model case-insensitive and save canonical IDs
+- Keep /allow-all available during startup while enterprise policy is still resolving
+- /add-dir grants sandbox access to added directories for the current session
+- /user list shows the authentication source for each signed-in account
+- Show retry progress messages before recovered responses after transient model failures
+- Model completions no longer show an authentication warning when an account-owned catalog is unavailable while signed out
+- Interactive sessions in git repositories reach the input prompt sooner
+- Timeline now shows whether you, Assisted Permissions, policy, or unattended fallback made each permission decision.
+
+## 1.0.95 - 2026-10-09
+
+- Use native Microsoft Entra broker authentication on macOS when available, with browser fallback.
+- copilot config supports sandbox credential injectHosts keys, with key completion in Bash, Zsh, and Fish.
+- --context now applies to new and resumed ACP sessions instead of silently using the default or previously saved context tier
+- Managed plugin setup retries hourly or after policy changes instead of on every message failure
+
+## 1.0.94 - 2026-10-08
+
+- Add Claude Haiku 5.5 to model selection and --model completions
+- copilot mcp add recovers cleanly after interrupted MCP config initialization
+- MCP enable/disable now works before server discovery without starting MCP servers
+- Assisted permissions send visible shell code to the permission judge instead of requiring unnecessary manual approval
+- Show a policy warning when startup bypass-permission flags are suppressed by managed settings
+- Clicking a Sessions sidebar row now reliably switches sessions during split-view reconciliation
+- Show update guidance when managed settings request a newer CLI version without blocking normal prompts
+- Managed policy can disable Assisted Permissions and keep sessions in Manual Approval mode.
+
+## 1.0.93 - 2026-10-07
+
+- Add enterprise permissions.limitTo to enforce managed domain boundaries for network requests
+- Run safe /user commands immediately during active turns, reject unsafe remote commands during active turns without opening dialogs, and queue commands advertised by relay hosts
+- Plugin skill commands stay available after reloading enabled plugins
+- Sandbox local-network allowlists now include localhost and loopback hosts.
+- GitHub.com Connector users can expand GitHub CLI permissions in place and retry connections without switching sign-in methods.
+- Honor --context long_context at startup and show accurate context allowance in /context
+- Connecting a Connector without the required GitHub scope now prompts to update your authorization instead of failing with an authentication error
+- Warmed language servers stay running across LSP requests when sandboxing is disabled
+- Clicking a truncated compact shell command expands it
+- Command sandboxing is available to all users via /sandbox and --sandbox.
+- MCP server configuration changes apply between turns without restarting the session.
+- Model picker updates the recommended list to prioritize GPT-6.1 Sol, GPT-6 Astra/Luna, and Claude 5.5 models.
+- Read user settings only from ~/.copilot/settings.json; user-setting keys in ~/.copilot/config.json are ignored.
+
+## 1.0.92 - 2026-10-05
+
+- Add `copilot config` subcommands to list, read, set, and remove settings.
+- Add a pre-conversation Ctrl+E environment picker to switch between local and cloud runs
+- Entra-protected MCP servers can silently renew access-token-only credentials.
+- Legacy HTTP+SSE MCP connections no longer hang indefinitely when a message POST is never acknowledged; the acknowledgement is bounded by the server's configured timeout
+- Voice runtime install errors name why the download from nuget.org failed, not only the fallback feed's 401
+- Compaction keeps your latest prompt when requests exceed context limits
+- Large Anthropic requests rejected by provider size limits now retry after downscaling images or removing attachments
+- Custom agent model entries keep model-bound reasoning effort only when that model is selected
+- Shell tool calls now stream live stdout and stderr output reliably in the timeline
+- Usage reporting preserves provider-reported reasoning token totals when available
+- Sessions no longer slow to a crawl for minutes after the agent writes a very large file in one step
+- Sandboxed shells now withhold ambient GITHUB_TOKEN unless explicitly configured.
+- Plan usage reflects the current billing period after quota resets
+- Custom agents launched through ACP task calls now resolve and run correctly
+- Remote session resume now uses your configured GitHub auth for --resume and --connect
+- Entra sign-in falls back to browser auth when no broker is available and shows a manual URL when auto-open fails
+- `copilot sandbox ca` commands now respect `--config-dir` (including with `-C`).
+- Search commands avoid sandbox bypass prompts when access is already granted
+- Sandboxed uv commands can write to the uv cache by default when dev tool access is enabled
+- pnpm commands run in sandboxed sessions without lock-file permission errors
+- Pressing `n` repeatedly in the Sessions tab reliably creates each new session
+- Reverse search updates results when command history finishes loading at startup
+- MCP tools recover within the same turn when server instructions change
+- Changing experimental mode with /experimental or /settings takes effect after restart even when launched with an opposing experimental flag
+- Keyboard, paste, and mouse input now stay ordered and responsive during rapid interaction.
+- Sandboxed shell commands offer a network bypass prompt whenever the proxy blocks a destination
+- Sandboxed scripts that run Git now authenticate with masked credentials and SSH remote rewrites
+- Sub-agents keep working after you replace your GitHub authentication credentials
+- Sandboxed commands on Windows write temporary files to the granted temp directory, so tools that rename a temp file into place work
+- Prompt-mode sessions fire a single sessionEnd hook after Stop-hook continuations complete
+- Reconnect to remote MCP servers after idle Streamable HTTP sessions expire
+- Messaging a running background agent now steers its active turn at the next processing opportunity.
+- Context rollovers keep your latest requests in the recovery context.
+- Hide the automatic sandbox CA setup prompt on Windows accounts that cannot self-elevate
+- Copilot no longer describes a subagent as configured when the current session cannot run it. Previously a session that could not use rubber-duck still reported it as set up in /subagents, and asking for it failed instead of being skipped cleanly.
+- MCP tools continue working after OAuth reauthentication when tool definitions are unchanged
+- Select which account to use after Microsoft Entra sign-in, and let /logout sign out those OAuth sessions.
+- Improve first-run startup by extracting the bundled CLI package in a child process
+- Improve startup responsiveness when connecting many MCP servers at once
+- Canvas actions can now return images to the model in invoke_canvas_action.
+- Remove retired models from the model picker and supported CLI selections
+
+## 1.0.91 - 2026-10-01
+
+- Add `copilot sandbox ca` commands to check, create, trust, rotate, and remove proxy CA trust, including unattended Windows setup; `/sandbox ca install` becomes `create` and `trust`
+- Session timelines now clear busy status after interrupted turns finish.
+- Sandboxed commands run on Windows versions without filesystem enumeration support, with a warning that PowerShell's current location may be wrong
+- Footer text selection stays on the same visible line when the footer grows or shrinks.
+- Offer sandbox network bypass for Node/npm EACCES socket denials on Windows
+- CLI shutdown flushes pending telemetry before exit, with a bounded delay when telemetry is still initializing.
+- Complete, statically analyzable read-only shell pipelines can now enter execution-evidence review, while incomplete or unbound pipelines require explicit approval.
+
+## 1.0.90 - 2026-09-30
+
+- Add support for GPT-6.1 Sol in model selection
+- Add --mcp-github-auth to scope GitHub account auth to approved MCP server origins
+- Add session-scoped read-only directory approvals to path access prompts
+- Permission prompts remain answerable after resuming interrupted sessions.
+- Auto-approval now takes into account messages you type while the agent is working, as it already did for prompts sent while it was idle
+- Compaction now returns a summary even when instructions ask for tool use.
+- Copying selected text on Wayland now finishes as soon as wl-copy accepts it, instead of timing out and falling back to the in-process clipboard that can print "Somebody else owns the clipboard now" over the UI
+- A narrow Sessions sidebar drops keyboard hints that do not fit instead of cutting one off mid-word
+- MCP tools recover after transient discovery failures without restarting the session; unchanged catalogs remain available during recovery.
+- "No supported model available" is no longer shown on launch or in the model picker when a configured provider already supplies a model
+- MCP tool calls complete even when servers keep sending progress updates after responding
+- A fresh launch no longer prints "Failed to read model provider attribution" errors while it signs in
+- MCP OAuth sign-in to servers such as Datadog reuses a still-valid cached token
+- Withdrawn running prompts stay removed after session resume
+- Click anywhere on expanded tool calls in compact timeline to collapse them
+- Holding Space and Ctrl+X V explain when voice mode is off or still getting ready
+
+## 1.0.89 - 2026-09-28
+
+- Left-clicking supported ask_user and elicitation form inputs focuses them and places the cursor at the clicked position
+- Add support for Claude Code rule files in .claude/rules as custom instructions
+- Sessions in the sidebar show a blue dot when they finished a turn you have not opened yet
+- Auto suggests a routing tier and lets you switch with a shortcut or click
+- Auto shows a quick feedback prompt after switching away to a manually selected model
+- MCP pre-registered OAuth clients honor configured oauthScopes.
+- In local sessions, Esc Esc in an empty chat input takes back a prompt whose turn the model has not started answering and removes it from the conversation
+- Add GPT-6 Sol and GPT-6 Luna to the model picker when available
+- Adding support for claude-opus-5.5
+- Shell output no longer shows trailing command completion metadata.
+- Timeline output stops auto-following while text selection is active
+- server/tool and server/\* tool filters now match MCP tool names that contain a slash
+- Queue exit commands while an agent response is still running
+- Extensions no longer fail to load under enterprise managed settings while managed MCP policy is still being applied
+- Fixed Git failures in applications launched from CLI shells when empty environment variables are dropped, on Git 2.36 or newer.
+- Sessions sidebar saves opened and closed tabs as they change, rather than only on exit
+- Agent shell commands in sandbox can access session files and logs
+- Fix Auto tier selection to cycle correctly in /model and remove the unsupported Fast profile; a previously stored, exported, or resumed Fast preference now falls back to Balance instead of routing on it
+- Run wrapped gh and git commands, such as `timeout 60 gh ...`, correctly in sandboxed sessions
+- ACP sessions stay connected when clients pause reading large responses
+- Gemini models no longer fail every request with 400 invalid request body when an MCP server exposes a tool whose schema puts a type or properties beside anyOf, such as a nullable discriminated union
+- GitHub MCP tools connect correctly on first CLI startup after sign-in
+- Ask-user forms keep custom Other answers separate across questions
+- MCP config loading keeps valid workspace servers when sibling entries are invalid
+- Delete old sessions succeeds when run directly in the CLI
+- Claude requests above attachment size limits now recover automatically before sending.
+- Listing shells shows running shells first, so a shell still running in the background is no longer hidden behind a long list of finished ones
+- View tool honors line ranges when providers send flattened view_range arguments
+- In local sessions, Up in an empty chat input recalls the pending message and leaves queued prompts in the queue
+- PR creation now follows repository pull request templates, preserving required sections and checklist structure.
+- Configure automatic indexed search activation with TGREP_FILE_COUNT_THRESHOLD
+- Direct plugin installs can now be enabled and disabled. One already recorded as disabled now stops loading; re-enable it with copilot plugin enable
+- Sandboxed commands on supported Windows versions can access localhost when Local network access is on
+- Autocomplete model IDs in /model and /model plan argument pickers
+- Show managed Connector consent progress with a copyable authorization URL during connect and reconnect.
+
 ## 1.0.88 - 2026-09-22
 
 - Add optional OSC 777 terminal notifications for direct Ghostty and WezTerm sessions.
